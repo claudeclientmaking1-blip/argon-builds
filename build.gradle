@@ -1,0 +1,34 @@
+plugins {
+    id 'fabric-loom' version '1.4.+'
+    id 'maven'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:1.21"
+    mappings "net.fabricmc:yarn:1.21+build.1:v2"
+    modImplementation "net.fabricmc:fabric-loader:0.14.+"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.91.+1.21"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+processResources {
+    // Copy the mod.json to the output so it's picked up by Fabric
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        include "argon.mixins.json"
+    }
+}
+
+loom {
+    // Optional: set the access widener file
+    accessWidenerFile = file("src/main/resources/argon.accesswidener")
+}
