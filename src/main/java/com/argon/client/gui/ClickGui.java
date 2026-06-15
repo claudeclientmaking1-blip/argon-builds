@@ -1,38 +1,21 @@
 package com.argon.client.gui;
 
-import com.argon.client.ArgonClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.client.gui.DrawContext;
 
 public class ClickGui extends Screen {
 
-    private boolean open = false;
-
-    protected ClickGui() {
-        super(Text.of("Argon ClickGUI"));
-    }
-
-    public void toggle() {
-        open = !open;
-        if (open) {
-            mc().setScreen(this);
-        } else {
-            mc().setScreen(null);
-        }
+    public ClickGui() {
+        super(Text.literal("Argon"));
     }
 
     @Override
-    public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
-        this.renderBackground(drawContext);
-        int y = 30;
-        for (var module : ArgonClient.moduleManager.getModules()) {
-            drawContext.drawText(mc().textRenderer,
-                    module.getName() + (module.isEnabled() ? " [ON]" : " [OFF]"),
-                    20, y, 0xFFFFFF, false);
-            y += 12;
-        }
-        super.render(drawContext, mouseX, mouseY, delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackground(context, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
+        // Simple placeholder GUI
+        context.drawCenteredText(this.textRenderer, "Argon ClickGui", this.width / 2, 20, 0xFFFFFF);
     }
 
     @Override
