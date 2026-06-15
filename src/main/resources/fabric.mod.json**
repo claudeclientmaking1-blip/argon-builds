@@ -3,7 +3,7 @@
   "id": "argon",
   "version": "1.0.0",
   "name": "Argon Client",
-  "description": "A Fabric client with Velocity, TriggerBot, Reach, AimAssist and Hitbox ESP.",
+  "description": "Fabric client with two aim‑assist modules: ArgonAim and DoomsdayAim.",
   "authors": [
     "ArgonDev"
   ],
