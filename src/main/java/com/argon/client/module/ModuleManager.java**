@@ -1,0 +1,39 @@
+package com.argon.client.module;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class ModuleManager {
+    private static ModuleManager instance;
+    private final List<Module> modules = new ArrayList<>();
+
+    private ModuleManager() {}
+
+    public static ModuleManager getInstance() {
+        if (instance == null) instance = new ModuleManager();
+        return instance;
+    }
+
+    /** Register a module manually. */
+    public void register(Module module) {
+        modules.add(module);
+    }
+
+    /** Initialise & register all built‑in modules. */
+    public void loadModules() {
+        register(new com.argon.client.module.impl.combat.Velocity());
+        register(new com.argon.client.module.impl.combat.TriggerBot());
+        register(new com.argon.client.module.impl.combat.Reach());
+        register(new com.argon.client.module.impl.combat.AimAssist());
+        register(new com.argon.client.module.impl.combat.Criticals());
+        register(new com.argon.client.module.impl.movement.Speed());
+        register(new com.argon.client.module.impl.movement.NoFall());
+        register(new com.argon.client.module.impl.movement.Sprint());
+        register(new com.argon.client.module.impl.player.AutoClicker());
+        register(new com.argon.client.module.impl.render.HitboxESP());
+    }
+
+    public List<Module> getModules() {
+        return modules;
+    }
+}
