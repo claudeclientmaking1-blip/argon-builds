@@ -1,17 +1,17 @@
 package com.argon.client;
 
+import com.argon.client.gui.HudRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import com.argon.client.gui.HudRenderer;
-import com.argon.client.module.ModuleManager;
 
+/**
+ * Main entry point for the Argon client.
+ */
 public class ArgonClient implements ClientModInitializer {
+
     @Override
     public void onInitializeClient() {
-        // Initialise modules
-        ModuleManager.init();
-
-        // Register HUD renderer
-        HudRenderCallback.EVENT.register((context, tickCounter) -> HudRenderer.render(context, tickCounter));
+        // Register HUD rendering. The lambda receives DrawContext and tickDelta.
+        HudRenderCallback.EVENT.register((context, tickDelta) -> HudRenderer.render(context, tickDelta));
     }
 }
