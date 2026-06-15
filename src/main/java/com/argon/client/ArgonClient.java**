@@ -1,0 +1,26 @@
+package com.argon.client;
+
+import net.fabricmc.api.ClientModInitializer;
+import com.argon.client.module.ModuleManager;
+import com.argon.client.gui.ClickGui;
+import com.argon.client.event.TickListener;
+
+public class ArgonClient implements ClientModInitializer {
+    @Override
+    public void onInitializeClient() {
+        // Load and register all modules
+        ModuleManager.getInstance().loadModules();
+
+        // Initialise GUI (click‑gui placeholder)
+        ClickGui.init();
+
+        // Register tick listener for modules that need per‑tick updates
+        TickListener.INSTANCE.register(() -> {
+            ModuleManager.getInstance().getModules().forEach(m -> {
+                if (m instanceof com.argon.client.module.Tickable) {
+                    ((com.argon.client.module.Tickable) m).onTick();
+                }
+            });
+        });
+    }
+}
