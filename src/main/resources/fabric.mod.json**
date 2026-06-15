@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "argon",
+  "version": "1.0.0",
+  "name": "Argon Client",
+  "description": "A Fabric client with Velocity, TriggerBot, Reach, AimAssist and Hitbox ESP.",
+  "authors": [
+    "ArgonDev"
+  ],
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.argon.client.ArgonClient"
+    ]
+  },
+  "mixins": [
+    "argon.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "fabric-api": "*",
+    "minecraft": "1.21"
+  }
+}
