@@ -1,0 +1,27 @@
+package com.argon.client.event;
+
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Simple utility that lets modules register a Runnable that is executed each client tick.
+ */
+public class TickListener implements ClientModInitializer {
+    public static final TickListener INSTANCE = new TickListener();
+
+    private final List<Runnable> callbacks = new ArrayList<>();
+
+    public void register(Runnable r) {
+        callbacks.add(r);
+    }
+
+    @Override
+    public void onInitializeClient() {
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            for (Runnable r : callbacks) r.run();
+        });
+    }
+}
