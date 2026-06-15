@@ -1,9 +1,12 @@
 package com.argon.client.gui;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
-import net.minecraft.client.gui.DrawContext;
 
+/**
+ * Very basic placeholder click GUI.
+ */
 public class ClickGui extends Screen {
 
     public ClickGui() {
@@ -12,9 +15,8 @@ public class ClickGui extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
-        // Simple placeholder GUI
+        // Draw title centered at the top
         context.drawCenteredText(this.textRenderer, "Argon ClickGui", this.width / 2, 20, 0xFFFFFF);
     }
 
