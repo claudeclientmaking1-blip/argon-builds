@@ -2,6 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "com.argon.client.mixin",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "EntityMixin",
     "PlayerMixin",
