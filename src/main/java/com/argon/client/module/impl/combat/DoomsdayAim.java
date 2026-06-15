@@ -1,66 +1,72 @@
 package com.argon.client.module.impl.combat;
 
 import com.argon.client.module.Module;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec3d;
-
-import java.util.Comparator;
-import java.util.List;
+import net.minecraft.util.math.MathHelper;
 
 /**
- * Doomsday style aim assist – faster target acquisition,
- * slight randomization to appear less bot‑like.
+ * Doomsday style aimbot – predicts the target's yaw/pitch a few ticks ahead.
  */
 public class DoomsdayAim extends Module {
 
-    private final double range = 5.0;
-    private final double randomness = 0.15; // random offset to yaw/pitch
+    private static final double RANGE = 5.0;
+    private static final int PREDICTION_TICKS = 3;
 
     public DoomsdayAim() {
-        super("DoomsdayAim", "Aggressive aim assist with jitter");
+        super("DoomsdayAim", "Prediction based aim assist");
     }
 
     @Override
-    public void onTick() {
-        if (mc.player == null || mc.world == null) return;
+    protected void onUpdate() {
+        ClientPlayerEntity player = mc().player;
+        if (player == null) return;
 
-        List<LivingEntity> targets = mc.world.getEntitiesByClass(LivingEntity.class, mc.player.getBoundingBox().expand(range), e ->
-                e != mc.player && e.isAlive() && !e.isSpectator());
-
-        if (targets.isEmpty()) return;
-
-        LivingEntity target = targets.stream()
-                .min(Comparator.comparing(e -> e.squaredDistanceTo(mc.player)))
-                .orElse(null);
-
-        if (target == null) return;
-
-        aimAt(target);
-
-        // Attack as fast as possible
-        if (mc.interactionManager.getAttackCooldown() == 0) {
-            mc.interactionManager.attackEntity(mc.player, target);
-            mc.player.swingHand(Hand.MAIN_HAND);
+        LivingEntity target = findTarget();
+        if (target != null) {
+            double[] predPos = predictPosition(target);
+            facePosition(predPos[0], predPos[1], predPos[2], player);
+            player.swingHand(Hand.MAIN_HAND);
+            player.interact(target, Hand.MAIN_HAND);
         }
     }
 
-    private void aimAt(LivingEntity target) {
-        Vec3d eye = mc.player.getEyePos();
-        Vec3d pos = target.getBoundingBox().getCenter();
+    private LivingEntity findTarget() {
+        double closest = RANGE;
+        LivingEntity best = null;
+        for (LivingEntity e : mc().world.getEntitiesByClass(LivingEntity.class, player -> true)) {
+            if (e == mc().player || e.isSpectator() || !e.isAlive()) continue;
+            double dist = mc().player.squaredDistanceTo(e);
+            if (dist < closest * closest) {
+                closest = Math.sqrt(dist);
+                best = e;
+            }
+        }
+        return best;
+    }
 
-        double dx = pos.x - eye.x;
-        double dy = pos.y - eye.y;
-        double dz = pos.z - eye.z;
+    private double[] predictPosition(LivingEntity target) {
+        double dx = target.getVelocity().x * PREDICTION_TICKS;
+        double dy = target.getVelocity().y * PREDICTION_TICKS;
+        double dz = target.getVelocity().z * PREDICTION_TICKS;
+        return new double[]{
+                target.getX() + dx,
+                target.getY() + dy,
+                target.getZ() + dz
+        };
+    }
 
-        float yaw = (float) Math.toDegrees(Math.atan2(dz, dx)) - 90f;
-        float pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+    private void facePosition(double x, double y, double z, ClientPlayerEntity player) {
+        double diffX = x - player.getX();
+        double diffY = y - (player.getY() + player.getEyeHeight(player.getPose()));
+        double diffZ = z - player.getZ();
 
-        // add slight random jitter
-        yaw += (float) ((Math.random() - 0.5) * randomness * 180);
-        pitch += (float) ((Math.random() - 0.5) * randomness * 90);
+        double dist = MathHelper.sqrt(diffX * diffX + diffZ * diffZ);
+        float yaw = (float) (MathHelper.atan2(diffZ, diffX) * (180F / Math.PI)) - 90.0F;
+        float pitch = (float) -(MathHelper.atan2(diffY, dist) * (180F / Math.PI));
 
-        mc.player.setYaw(yaw);
-        mc.player.setPitch(pitch);
+        player.setYaw(yaw);
+        player.setPitch(pitch);
     }
 }
