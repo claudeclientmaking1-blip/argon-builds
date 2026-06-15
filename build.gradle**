@@ -1,0 +1,48 @@
+plugins {
+    id 'fabric-loom' version '1.7-SNAPSHOT'
+    id 'java-library'
+}
+
+group = 'com.argon.client'
+version = '1.0.0'
+archivesBaseName = 'argon-client'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://maven.fabricmc.net/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:1.21"
+    mappings loom.layered {
+        officialMojangMappings()
+        // Yarn can be used alternatively if you prefer:
+        // yarn("org.quiltmc:quilt-mappings:1.21+build.2")
+    }
+    modImplementation "net.fabricmc:fabric-loader:0.15.11"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:0.100.8+1.21"
+}
+
+loom {
+    // Use the default Loom configuration
+    splitEnvironmentSourceSets = false
+    runs {
+        client {
+            client()
+            ideConfigGenerated true
+        }
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
