@@ -1,0 +1,10 @@
+package com.argon.client.gui;
+
+/**
+ * Minimal stub – a real click‑gui would be added later.
+ */
+public class ClickGui {
+    public static void init() {
+        // No UI for now.
+    }
+}
