@@ -5,6 +5,6 @@ package com.argon.client.gui;
  */
 public class ClickGui {
     public static void init() {
-        // No UI for now.
+        // No GUI for now.
     }
 }
