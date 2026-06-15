@@ -1,25 +1,17 @@
 package com.argon.client.gui;
 
-import com.argon.client.module.Module;
-import com.argon.client.module.ModuleManager;
+import com.argon.client.ArgonClient;
 import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class HudRenderer {
 
-    private final TextRenderer font;
-
-    public HudRenderer(TextRenderer font) {
-        this.font = font;
-    }
-
-    public void render(DrawContext context) {
+    public void render(MatrixStack matrices) {
+        TextRenderer tr = net.minecraft.client.MinecraftClient.getInstance().textRenderer;
         int y = 10;
-        for (Module module : ModuleManager.getModules()) {
+        for (var module : ArgonClient.moduleManager.getModules()) {
             if (module.isEnabled()) {
-                String text = module.getName();
-                context.drawText(font, text, 10, y, 0xFFFFFF, true);
+                tr.draw(matrices, module.getName(), 10, y, 0xFFFFFF);
                 y += 10;
             }
         }
