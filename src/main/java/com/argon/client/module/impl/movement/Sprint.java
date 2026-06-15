@@ -4,24 +4,23 @@ import com.argon.client.module.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 
+/**
+ * Simple auto‑sprint module.
+ */
 public class Sprint extends Module {
 
     public Sprint() {
-        super("Sprint");
+        super("Sprint", "Automatically sprint when moving forward");
     }
 
     @Override
-    protected void onEnable() {}
+    public void onTick() {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null) return;
+        PlayerEntity player = mc.player;
 
-    @Override
-    protected void onDisable() {}
-
-    @Override
-    public void onTick(MinecraftClient client) {
-        PlayerEntity player = client.player;
-        if (player == null) return;
-
-        if (!player.isSprinting() && player.input.movementForward > 0) {
+        // In 1.21 player input is accessed via getInput()
+        if (!player.isSprinting() && player.getInput().movementForward > 0) {
             player.setSprinting(true);
         }
     }
