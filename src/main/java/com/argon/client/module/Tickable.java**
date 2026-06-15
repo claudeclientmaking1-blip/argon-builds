@@ -1,0 +1,8 @@
+package com.argon.client.module;
+
+/**
+ * Modules that need a per‑tick update should implement this.
+ */
+public interface Tickable {
+    void onTick();
+}
