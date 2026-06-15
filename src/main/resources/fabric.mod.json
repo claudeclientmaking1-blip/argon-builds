@@ -1,29 +1,28 @@
 {
   "schemaVersion": 1,
-  "id": "argon",
+  "id": "${mod_id}",
   "version": "${version}",
   "name": "${mod_name}",
   "description": "${description}",
-  "authors": [
-    "Argon"
-  ],
-  "contact": {
-    "homepage": "https://example.com",
-    "sources": "https://github.com/example/argon-client"
-  },
-  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "client": [
       "com.argon.client.ArgonClient"
     ]
   },
-  "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric-api": "*",
-    "minecraft": "${minecraft_version}"
-  },
   "mixins": [
     "argon.mixins.json"
-  ]
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": ">=${minecraft_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "sources": "https://github.com/yourname/argon-client"
+      }
+    }
+  }
 }
