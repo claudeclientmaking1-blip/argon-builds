@@ -1,0 +1,11 @@
+package com.argon.client.mixin;
+
+import net.minecraft.client.network.ClientPlayerEntity;
+import org.spongepowered.asm.mixin.Mixin;
+
+/**
+ * Placeholder for possible future client‑player tweaks.
+ */
+@Mixin(ClientPlayerEntity.class)
+public abstract class PlayerMixin {
+}
