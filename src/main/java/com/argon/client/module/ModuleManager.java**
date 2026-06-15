@@ -14,23 +14,15 @@ public class ModuleManager {
         return instance;
     }
 
-    /** Register a module manually. */
     public void register(Module module) {
         modules.add(module);
     }
 
-    /** Initialise & register all built‑in modules. */
+    /** Register the built‑in modules (only the two aim assists for this build). */
     public void loadModules() {
-        register(new com.argon.client.module.impl.combat.Velocity());
-        register(new com.argon.client.module.impl.combat.TriggerBot());
-        register(new com.argon.client.module.impl.combat.Reach());
-        register(new com.argon.client.module.impl.combat.AimAssist());
-        register(new com.argon.client.module.impl.combat.Criticals());
-        register(new com.argon.client.module.impl.movement.Speed());
-        register(new com.argon.client.module.impl.movement.NoFall());
-        register(new com.argon.client.module.impl.movement.Sprint());
-        register(new com.argon.client.module.impl.player.AutoClicker());
-        register(new com.argon.client.module.impl.render.HitboxESP());
+        register(new com.argon.client.module.impl.combat.ArgonAim());
+        register(new com.argon.client.module.impl.combat.DoomsdayAim());
+        // You can still add other modules here if you wish.
     }
 
     public List<Module> getModules() {
