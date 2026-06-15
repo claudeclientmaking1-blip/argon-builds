@@ -1,0 +1,33 @@
+package com.argon.client.module;
+
+/**
+ * Base class for all modules.
+ */
+public abstract class Module {
+    protected final String name;
+    protected boolean enabled = false;
+
+    public Module(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /** Called when the module is toggled on. */
+    public abstract void onEnable();
+
+    /** Called when the module is toggled off. */
+    public abstract void onDisable();
+
+    /** Called when the user toggles the module (via any UI). */
+    public final void toggle() {
+        enabled = !enabled;
+        if (enabled) onEnable(); else onDisable();
+    }
+}
