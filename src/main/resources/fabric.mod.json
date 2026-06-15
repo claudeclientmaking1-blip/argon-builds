@@ -1,25 +1,29 @@
 {
   "schemaVersion": 1,
   "id": "argon",
-  "version": "1.0.0",
-  "name": "Argon Client",
-  "description": "A client with aim assist modules.",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
   "authors": [
     "Argon"
   ],
+  "contact": {
+    "homepage": "https://example.com",
+    "sources": "https://github.com/example/argon-client"
+  },
+  "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "client": [
       "com.argon.client.ArgonClient"
     ]
   },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  },
   "mixins": [
     "argon.mixins.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.14.0",
-    "fabric-api": "*",
-    "minecraft": "1.21",
-    "java": ">=21"
-  }
+  ]
 }
