@@ -1,0 +1,61 @@
+package com.argon.client.module.impl.combat;
+
+import com.argon.client.module.Module;
+import com.argon.client.module.Tickable;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.Vec3d;
+
+public class TriggerBot extends Module implements Tickable {
+
+    private static final double RANGE = 6.0; // configurable if desired
+
+    public TriggerBot() {
+        super("TriggerBot");
+    }
+
+    @Override
+    public void onEnable() {}
+
+    @Override
+    public void onDisable() {}
+
+    @Override
+    public void onTick() {
+        if (!enabled) return;
+
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null || mc.world == null) return;
+
+        // Ray trace to see what the crosshair is looking at
+        EntityHitResult result = raycast(RANGE);
+        if (result == null) return;
+
+        Entity target = result.getEntity();
+        if (target instanceof LivingEntity le && le.isAlive() && le != mc.player) {
+            // Perform attack
+            mc.interactionManager.attackEntity(mc.player, le);
+            mc.player.swingHand(mc.player.getActiveHand());
+        }
+    }
+
+    private EntityHitResult raycast(double distance) {
+        MinecraftClient mc = MinecraftClient.getInstance();
+        Vec3d eyes = mc.player.getEyePos();
+        Vec3d look = mc.player.getRotationVec(1.0F);
+        Vec3d end = eyes.add(look.multiply(distance));
+
+        RayTraceContext context = new RayTraceContext(
+                eyes,
+                end,
+                RayTraceContext.ShapeType.OUTLINE,
+                RayTraceContext.FluidHandling.NONE,
+                mc.player
+        );
+
+        return (EntityHitResult) mc.world.raycast(context);
+    }
+}
