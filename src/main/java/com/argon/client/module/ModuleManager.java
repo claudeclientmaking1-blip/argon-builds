@@ -2,49 +2,40 @@ package com.argon.client.module;
 
 import com.argon.client.module.impl.combat.KillAura;
 import com.argon.client.module.impl.combat.DoomsdayAim;
-import com.argon.client.module.impl.combat.Velocity;
-import com.argon.client.module.impl.combat.Reach;
-import com.argon.client.module.impl.combat.Criticals;
-import com.argon.client.module.impl.movement.Speed;
-import com.argon.client.module.impl.movement.NoFall;
-import com.argon.client.module.impl.movement.Sprint;
-import com.argon.client.module.impl.player.AutoClicker;
-import com.argon.client.module.impl.render.ESP;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ModuleManager {
+    private final List<Module> modules = new ArrayList<>();
 
-    private static final List<Module> modules = new ArrayList<>();
-
-    public static void init() {
-        // Register all modules
-        register(new KillAura());
-        register(new DoomsdayAim());
-        register(new Velocity());
-        register(new Reach());
-        register(new Criticals());
-        register(new Speed());
-        register(new NoFall());
-        register(new Sprint());
-        register(new AutoClicker());
-        register(new ESP());
-    }
-
-    private static void register(Module module) {
+    public void register(Module module) {
         modules.add(module);
     }
 
-    public static List<Module> getModules() {
-        return Collections.unmodifiableList(modules);
+    public List<Module> getModules() {
+        return modules;
     }
 
-    public static Module getByName(String name) {
-        return modules.stream()
-                .filter(m -> m.getName().equalsIgnoreCase(name))
-                .findFirst()
-                .orElse(null);
+    public void registerAllDefaults() {
+        // Aim‑assist modules
+        register(new KillAura());
+        register(new DoomsdayAim());
+
+        // Stubs for the rest (you can replace with real implementations later)
+        // register(new Velocity());
+        // register(new Reach());
+        // register(new Criticals());
+        // register(new Speed());
+        // register(new NoFall());
+        // register(new Sprint());
+        // register(new AutoClicker());
+        // register(new ESP());
+    }
+
+    // Called each client tick
+    public void onTick() {
+        for (Module m : modules) {
+            m.onTick();
+        }
     }
 }
