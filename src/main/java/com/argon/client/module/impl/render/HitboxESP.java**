@@ -1,0 +1,91 @@
+package com.argon.client.module.impl.render;
+
+import com.argon.client.module.Module;
+import com.argon.client.module.Tickable;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4fStack;
+
+/**
+ * Very simple ESP that draws a coloured box around every living entity.
+ */
+public class HitboxESP extends Module implements Tickable {
+
+    public HitboxESP() {
+        super("HitboxESP");
+    }
+
+    @Override
+    public void onEnable() {}
+
+    @Override
+    public void onDisable() {}
+
+    @Override
+    public void onTick() {
+        if (!enabled) return;
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.world == null || mc.player == null) return;
+
+        var tessellator = Tessellator.getInstance();
+        var buffer = tessellator.getBuffer();
+
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.disableDepthTest();
+
+        Matrix4fStack pose = new Matrix4fStack(1);
+        pose.mul(mc.gameRenderer.getCamera().getViewProjectionMatrix());
+
+        buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
+
+        for (Entity e : mc.world.getEntities()) {
+            if (e instanceof net.minecraft.entity.LivingEntity && e != mc.player) {
+                Vec3d pos = e.getPos().subtract(mc.gameRenderer.getCamera().getPos());
+                drawBox(buffer, pose, pos, e.getHeight(), e.getWidth(), 0.0f, 1.0f, 0.0f, 0.5f);
+            }
+        }
+
+        BufferRenderer.drawWithGlobalProgram(buffer.end());
+
+        RenderSystem.enableDepthTest();
+        RenderSystem.disableBlend();
+    }
+
+    private void drawBox(BufferBuilder buf, Matrix4fStack pose, Vec3d pos,
+                         double height, double width,
+                         float r, float g, float b, float a) {
+        double w = width / 2.0;
+        double x = pos.x;
+        double y = pos.y;
+        double z = pos.z;
+
+        // 12 edges of the box
+        addLine(buf, pose, x - w, y, z - w, x - w, y + height, z - w, r, g, b, a);
+        addLine(buf, pose, x - w, y, z + w, x - w, y + height, z + w, r, g, b, a);
+        addLine(buf, pose, x + w, y, z - w, x + w, y + height, z - w, r, g, b, a);
+        addLine(buf, pose, x + w, y, z + w, x + w, y + height, z + w, r, g, b, a);
+
+        addLine(buf, pose, x - w, y, z - w, x + w, y, z - w, r, g, b, a);
+        addLine(buf, pose, x - w, y, z + w, x + w, y, z + w, r, g, b, a);
+        addLine(buf, pose, x - w, y, z - w, x - w, y, z + w, r, g, b, a);
+        addLine(buf, pose, x + w, y, z - w, x + w, y, z + w, r, g, b, a);
+
+        addLine(buf, pose, x - w, y + height, z - w, x + w, y + height, z - w, r, g, b, a);
+        addLine(buf, pose, x - w, y + height, z + w, x + w, y + height, z + w, r, g, b, a);
+        addLine(buf, pose, x - w, y + height, z - w, x - w, y + height, z + w, r, g, b, a);
+        addLine(buf, pose, x + w, y + height, z - w, x + w, y + height, z + w, r, g, b, a);
+    }
+
+    private void addLine(BufferBuilder buf, Matrix4fStack pose,
+                         double x1, double y1, double z1,
+                         double x2, double y2, double z2,
+                         float r, float g, float b, float a) {
+        buf.vertex(pose, (float) x1, (float) y1, (float) z1).color(r, g, b, a).next();
+        buf.vertex(pose, (float) x2, (float) y2, (float) z2).color(r, g, b, a).next();
+    }
+}
