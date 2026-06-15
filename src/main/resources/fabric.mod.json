@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "${mod_id}",
-  "version": "${version}",
+  "version": "${mod_version}",
   "name": "${mod_name}",
   "description": "${description}",
   "environment": "*",
@@ -16,13 +16,6 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": ">=${minecraft_version}"
-  },
-  "custom": {
-    "modmenu": {
-      "links": {
-        "sources": "https://github.com/yourname/argon-client"
-      }
-    }
+    "minecraft": "${minecraft_version}"
   }
 }
