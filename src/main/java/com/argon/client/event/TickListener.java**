@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Simple utility that lets modules register a Runnable that is executed each client tick.
+ * Simple global tick dispatcher. Modules register a Runnable here.
  */
 public class TickListener implements ClientModInitializer {
     public static final TickListener INSTANCE = new TickListener();
@@ -20,8 +20,6 @@ public class TickListener implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            for (Runnable r : callbacks) r.run();
-        });
+        ClientTickEvents.END_CLIENT_TICK.register(client -> callbacks.forEach(Runnable::run));
     }
 }
