@@ -1,17 +1,6 @@
 plugins {
-    id 'fabric-loom' version '1.4.+'
-    id 'maven'
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    minecraft "com.mojang:minecraft:1.21"
-    mappings "net.fabricmc:yarn:1.21+build.1:v2"
-    modImplementation "net.fabricmc:fabric-loader:0.14.+"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:0.91.+1.21"
+    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'maven-publish'
 }
 
 java {
@@ -20,15 +9,56 @@ java {
     }
 }
 
-processResources {
-    // Copy the mod.json to the output so it's picked up by Fabric
-    from(sourceSets.main.resources.srcDirs) {
-        include "fabric.mod.json"
-        include "argon.mixins.json"
-    }
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+    // Loom already adds Maven Central and Fabric repositories
+}
+
+dependencies {
+    // Fabric API
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    
+    // Minecraft
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 }
 
 loom {
-    // Optional: set the access widener file
-    accessWidenerFile = file("src/main/resources/argon.accesswidener")
+    accessWidenerPath = file("src/main/resources/argon.accesswidener")
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "fabric_version", project.fabric_version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version,
+               "loader_version": project.loader_version,
+               "fabric_version": project.fabric_version,
+               "minecraft_version": project.minecraft_version,
+               "mod_id": project.mod_id,
+               "mod_name": project.mod_name,
+               "description": project.description
+    }
+}
+
+tasks.register('copyMixinJson', Copy) {
+    from 'src/main/resources/argon.mixins.json'
+    into "$buildDir/resources/main"
+}
+processResources.dependsOn copyMixinJson
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
 }
