@@ -1,33 +1,38 @@
 package com.argon.client.gui;
 
-import com.argon.client.module.Module;
-import com.argon.client.module.ModuleManager;
+import com.argon.client.ArgonClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 
 public class ClickGui extends Screen {
 
+    private boolean open = false;
+
     protected ClickGui() {
-        super(Text.literal("Argon Click GUI"));
+        super(Text.of("Argon ClickGUI"));
+    }
+
+    public void toggle() {
+        open = !open;
+        if (open) {
+            mc().setScreen(this);
+        } else {
+            mc().setScreen(null);
+        }
     }
 
     @Override
-    protected void init() {
-        int y = 20;
-        for (Module module : ModuleManager.getModules()) {
-            ButtonWidget btn = ButtonWidget.builder(
-                    Text.literal(module.getName() + (module.isEnabled() ? " [ON]" : " [OFF]")),
-                    button -> {
-                        module.toggle();
-                        button.setMessage(Text.literal(module.getName() + (module.isEnabled() ? " [ON]" : " [OFF]")));
-                    })
-                    .position(20, y)
-                    .size(120, 20)
-                    .build();
-            addDrawableChild(btn);
-            y += 25;
+    public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
+        this.renderBackground(drawContext);
+        int y = 30;
+        for (var module : ArgonClient.moduleManager.getModules()) {
+            drawContext.drawText(mc().textRenderer,
+                    module.getName() + (module.isEnabled() ? " [ON]" : " [OFF]"),
+                    20, y, 0xFFFFFF, false);
+            y += 12;
         }
+        super.render(drawContext, mouseX, mouseY, delta);
     }
 
     @Override
