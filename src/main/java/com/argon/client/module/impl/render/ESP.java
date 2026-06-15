@@ -3,78 +3,82 @@ package com.argon.client.module.impl.render;
 import com.argon.client.module.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
+import net.minecraft.client.render.VertexConsumerProvider.Immediate;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
 
-import java.util.List;
-
+/**
+ * Very simple ESP that draws a colored box around living entities.
+ */
 public class ESP extends Module {
 
     public ESP() {
-        super("ESP");
-    }
-
-    @Override
-    protected void onEnable() {}
-
-    @Override
-    protected void onDisable() {}
-
-    @Override
-    public void onTick(MinecraftClient client) {
-        // Render is handled via mixin (LivingEntityMixin) calling this method
+        super("ESP", "Draw boxes around entities");
     }
 
     public void renderEntityBox(MinecraftClient client, LivingEntity entity, float tickDelta) {
-        if (!entity.isAlive()) return;
+        if (!isEnabled()) return;
 
-        Box box = entity.getBoundingBox();
+        MatrixStack matrices = new MatrixStack();
+        matrices.push();
         Vec3d camPos = client.gameRenderer.getCamera().getPos();
+        matrices.translate(entity.getX() - camPos.x,
+                entity.getY() - camPos.y,
+                entity.getZ() - camPos.z);
 
-        MatrixStack ms = new MatrixStack();
-        ms.translate(-camPos.x, -camPos.y, -camPos.z);
-        RenderSystem.setShader(GameRenderer::getPositionShader);
-        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
         RenderSystem.disableDepthTest();
         RenderSystem.disableCull();
-        buffer.begin(VertexFormat.DrawMode.DEBUG_LINES, VertexFormats.POSITION_COLOR);
 
-        // 8 corners of the box
-        double x1 = box.minX;
-        double y1 = box.minY;
-        double z1 = box.minZ;
-        double x2 = box.maxX;
-        double y2 = box.maxY;
-        double z2 = box.maxZ;
-        float r = 0f, g = 1f, b = 0f, a = 1f;
+        BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+        buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.POSITION_COLOR);
 
-        // Bottom rectangle
-        addLine(buffer, x1, y1, z1, x2, y1, z1, r, g, b, a);
-        addLine(buffer, x2, y1, z1, x2, y1, z2, r, g, b, a);
-        addLine(buffer, x2, y1, z2, x1, y1, z2, r, g, b, a);
-        addLine(buffer, x1, y1, z2, x1, y1, z1, r, g, b, a);
-        // Top rectangle
+        float r = 1f, g = 0f, b = 0f, a = 0.8f;
+
+        // box corners
+        float x1 = -entity.getWidth() / 2f;
+        float x2 = entity.getWidth() / 2f;
+        float y1 = 0f;
+        float y2 = entity.getHeight();
+        float z1 = -entity.getWidth() / 2f;
+        float z2 = entity.getWidth() / 2f;
+
+        // vertical edges
+        addLine(buffer, x1, y1, z1, x1, y2, z1, r, g, b, a);
+        addLine(buffer, x1, y1, z2, x1, y2, z2, r, g, b, a);
+        addLine(buffer, x2, y1, z1, x2, y2, z1, r, g, b, a);
+        addLine(buffer, x2, y1, z2, x2, y2, z2, r, g, b, a);
+        // top rectangle
         addLine(buffer, x1, y2, z1, x2, y2, z1, r, g, b, a);
         addLine(buffer, x2, y2, z1, x2, y2, z2, r, g, b, a);
         addLine(buffer, x2, y2, z2, x1, y2, z2, r, g, b, a);
         addLine(buffer, x1, y2, z2, x1, y2, z1, r, g, b, a);
-        // Verticals
-        addLine(buffer, x1, y1, z1, x1, y2, z1, r, g, b, a);
-        addLine(buffer, x2, y1, z1, x2, y2, z1, r, g, b, a);
-        addLine(buffer, x2, y1, z2, x2, y2, z2, r, g, b, a);
-        addLine(buffer, x1, y1, z2, x1, y2, z2, r, g, b, a);
+        // bottom rectangle
+        addLine(buffer, x1, y1, z1, x2, y1, z1, r, g, b, a);
+        addLine(buffer, x2, y1, z1, x2, y1, z2, r, g, b, a);
+        addLine(buffer, x2, y1, z2, x1, y1, z2, r, g, b, a);
+        addLine(buffer, x1, y1, z2, x1, y1, z1, r, g, b, a);
 
         BufferRenderer.drawWithShader(buffer.end());
+
         RenderSystem.enableDepthTest();
         RenderSystem.enableCull();
+
+        matrices.pop();
     }
 
-    private void addLine(BufferBuilder buffer, double x1, double y1, double z1,
-                         double x2, double y2, double z2,
+    private void addLine(BufferBuilder buffer,
+                         float x1, float y1, float z1,
+                         float x2, float y2, float z2,
                          float r, float g, float b, float a) {
         buffer.vertex(x1, y1, z1).color(r, g, b, a).next();
         buffer.vertex(x2, y2, z2).color(r, g, b, a).next();
+    }
+
+    @Override
+    public void onTick() {
+        // No per‑tick logic needed; rendering is handled elsewhere.
     }
 }
