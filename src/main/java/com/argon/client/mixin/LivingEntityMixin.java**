@@ -4,7 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 
 /**
- * Placeholder for future living‑entity tweaks (e.g., crit handling).
+ * Empty living‑entity mixin placeholder.
  */
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin {
