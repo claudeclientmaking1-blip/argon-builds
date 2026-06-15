@@ -4,12 +4,18 @@ import net.minecraft.client.MinecraftClient;
 
 public abstract class Module {
     private final String name;
-    private final String description;
     private boolean enabled = false;
 
-    protected Module(String name, String description) {
+    public Module(String name) {
         this.name = name;
-        this.description = description;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public void toggle() {
@@ -18,30 +24,9 @@ public abstract class Module {
         else onDisable();
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
+    protected abstract void onEnable();
+    protected abstract void onDisable();
 
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    // Called every client tick
-    public void onTick() {
-        if (enabled) {
-            onUpdate();
-        }
-    }
-
-    protected void onEnable() {}
-    protected void onDisable() {}
-    protected void onUpdate() {}
-
-    protected MinecraftClient mc() {
-        return MinecraftClient.getInstance();
-    }
+    /** Called each tick on the client thread */
+    public void onTick(MinecraftClient client) {}
 }
