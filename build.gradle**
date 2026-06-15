@@ -25,16 +25,13 @@ dependencies {
     minecraft "com.mojang:minecraft:1.21"
     mappings loom.layered {
         officialMojangMappings()
-        // Yarn can be used alternatively if you prefer:
-        // yarn("org.quiltmc:quilt-mappings:1.21+build.2")
     }
     modImplementation "net.fabricmc:fabric-loader:0.15.11"
     modImplementation "net.fabricmc.fabric-api:fabric-api:0.100.8+1.21"
 }
 
 loom {
-    // Use the default Loom configuration
-    splitEnvironmentSourceSets = false
+    // default settings are fine
     runs {
         client {
             client()
