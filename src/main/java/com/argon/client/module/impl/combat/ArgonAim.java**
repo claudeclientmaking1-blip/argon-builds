@@ -1,0 +1,68 @@
+package com.argon.client.module.impl.combat;
+
+import com.argon.client.module.Module;
+import com.argon.client.module.Tickable;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.math.Vec3d;
+
+/**
+ * Gentle aim‑assist – rotates at most 2° per tick toward the nearest target.
+ */
+public class ArgonAim extends Module implements Tickable {
+
+    private static final double MAX_ANGLE_PER_TICK = Math.toRadians(2.0); // 2°
+
+    public ArgonAim() {
+        super("ArgonAim");
+    }
+
+    @Override
+    public void onEnable() {}
+
+    @Override
+    public void onDisable() {}
+
+    @Override
+    public void onTick() {
+        if (!enabled) return;
+        MinecraftClient mc = MinecraftClient.getInstance();
+        if (mc.player == null || mc.world == null) return;
+
+        LivingEntity nearest = null;
+        double closestSq = Double.MAX_VALUE;
+
+        for (var entity : mc.world.getEntities()) {
+            if (entity instanceof LivingEntity le && le.isAlive() && le != mc.player) {
+                double distSq = mc.player.squaredDistanceTo(le);
+                if (distSq < closestSq && distSq <= 36.0) { // 6‑block radius
+                    closestSq = distSq;
+                    nearest = le;
+                }
+            }
+        }
+
+        if (nearest != null) {
+            Vec3d aim = nearest.getEyePos().subtract(mc.player.getEyePos()).normalize();
+            float targetYaw = (float) Math.toDegrees(Math.atan2(-aim.x, aim.z));
+            float targetPitch = (float) Math.toDegrees(Math.asin(-aim.y));
+
+            mc.player.yaw = smoothRotate(mc.player.yaw, targetYaw, (float) Math.toDegrees(MAX_ANGLE_PER_TICK));
+            mc.player.pitch = smoothRotate(mc.player.pitch, targetPitch, (float) Math.toDegrees(MAX_ANGLE_PER_TICK));
+        }
+    }
+
+    private float smoothRotate(float current, float target, float maxDelta) {
+        float delta = wrapDegrees(target - current);
+        if (delta > maxDelta) delta = maxDelta;
+        if (delta < -maxDelta) delta = -maxDelta;
+        return current + delta;
+    }
+
+    private float wrapDegrees(float degrees) {
+        degrees %= 360.0F;
+        if (degrees >= 180.0F) degrees -= 360.0F;
+        if (degrees < -180.0F) degrees += 360.0F;
+        return degrees;
+    }
+}
