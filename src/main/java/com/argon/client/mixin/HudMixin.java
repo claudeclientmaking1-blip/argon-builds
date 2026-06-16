@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(InGameHud.class)
 public class HudMixin {
-    @Inject(method="render",at=@At("TAIL"))
-    private void onRender(DrawContext ctx,RenderTickCounter counter,CallbackInfo ci){
+    @Inject(method = "render", at = @At("TAIL"))
+    private void onRender(DrawContext ctx, RenderTickCounter counter, CallbackInfo ci) {
         HudRenderer.render(ctx);
     }
 }
