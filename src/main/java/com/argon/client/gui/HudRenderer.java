@@ -13,7 +13,7 @@ public class HudRenderer {
             String text = m.getName();
             int w = mc.textRenderer.getWidth(text);
             int x = ctx.getScaledWindowWidth() - w - 2;
-            ctx.fill(x-1, y-1, x+w+1, y+9, 0x80000000);
+            ctx.fill(x - 1, y - 1, x + w + 1, y + 9, 0x80000000);
             ctx.drawText(mc.textRenderer, text, x, y, 0xFF55FF55, true);
             y += 11;
         }
