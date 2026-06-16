@@ -1,17 +1,16 @@
 package com.argon.client;
-
-import com.argon.client.gui.HudRenderer;
+import com.argon.client.module.ModuleManager;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-
-/**
- * Main entry point for the Argon client.
- */
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 public class ArgonClient implements ClientModInitializer {
-
+    public static final Logger LOGGER = LoggerFactory.getLogger("argon");
     @Override
     public void onInitializeClient() {
-        // Register HUD rendering. The lambda receives DrawContext and tickDelta.
-        HudRenderCallback.EVENT.register((context, tickDelta) -> HudRenderer.render(context, tickDelta));
+        LOGGER.info("Argon Client loading...");
+        ModuleManager.init();
+        ClientTickEvents.END_CLIENT_TICK.register(c -> ModuleManager.onTick());
+        LOGGER.info("Argon Client loaded!");
     }
 }
