@@ -14,8 +14,8 @@ public class AimAssist extends Module {
             if (d < closest) { closest = d; target = e; }
         }
         if (target == null) return;
-        Vec3d diff = target.getPos().add(0, target.getHeight()/2, 0).subtract(mc.player.getEyePos());
-        double dist = Math.sqrt(diff.x*diff.x + diff.z*diff.z);
+        Vec3d diff = target.getPos().add(0, target.getHeight() / 2, 0).subtract(mc.player.getEyePos());
+        double dist = Math.sqrt(diff.x * diff.x + diff.z * diff.z);
         float yaw   = (float) Math.toDegrees(Math.atan2(-diff.x, diff.z));
         float pitch = (float) Math.toDegrees(Math.atan2(-diff.y, dist));
         float dy = yaw - mc.player.getYaw(); float dp = pitch - mc.player.getPitch();
