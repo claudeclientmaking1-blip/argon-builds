@@ -1,21 +1,27 @@
 package com.argon.client.module;
-
+import com.argon.client.module.impl.combat.*;
+import com.argon.client.module.impl.movement.*;
+import com.argon.client.module.impl.player.*;
+import com.argon.client.module.impl.render.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-
-/**
- * Simple registry for modules.
- */
 public class ModuleManager {
-
-    private static final List<Module> MODULES = new ArrayList<>();
-
-    public static void register(Module module) {
-        MODULES.add(module);
+    private static final List<Module> modules = new ArrayList<>();
+    public static void init() {
+        modules.add(new KillAura());
+        modules.add(new Velocity());
+        modules.add(new Reach());
+        modules.add(new Criticals());
+        modules.add(new AimAssist());
+        modules.add(new Speed());
+        modules.add(new NoFall());
+        modules.add(new Sprint());
+        modules.add(new AutoClicker());
+        modules.add(new ESP());
     }
-
-    public static List<Module> getModules() {
-        return Collections.unmodifiableList(MODULES);
+    public static List<Module> getModules() { return modules; }
+    public static Module getModule(String name) {
+        return modules.stream().filter(m -> m.getName().equalsIgnoreCase(name)).findFirst().orElse(null);
     }
+    public static void onTick() { for (Module m : modules) { if (m.isEnabled()) m.onTick(); } }
 }
