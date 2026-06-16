@@ -1,7 +1,0 @@
-package com.argon.client.gui;
-
-/**
- * Placeholder for future HUD elements.
- */
-public class HudRenderer {
-}
