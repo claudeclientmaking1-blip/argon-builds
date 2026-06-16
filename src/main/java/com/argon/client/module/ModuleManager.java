@@ -9,6 +9,7 @@ public class ModuleManager {
     private static final List<Module> modules = new ArrayList<>();
     public static void init() {
         modules.add(new KillAura());
+        modules.add(new TriggerBot());
         modules.add(new Velocity());
         modules.add(new Reach());
         modules.add(new Criticals());
