@@ -8,14 +8,13 @@ import java.util.List;
 public class ModuleManager {
     private static final List<Module> modules = new ArrayList<>();
     public static void init() {
-        modules.add(new KillAura());
+        modules.add(new AimAssist());
+        modules.add(new Criticals());
+        modules.add(new Reach());
         modules.add(new TriggerBot());
         modules.add(new Velocity());
-        modules.add(new Reach());
-        modules.add(new Criticals());
-        modules.add(new AimAssist());
-        modules.add(new Speed());
         modules.add(new NoFall());
+        modules.add(new Speed());
         modules.add(new Sprint());
         modules.add(new AutoClicker());
         modules.add(new ESP());
