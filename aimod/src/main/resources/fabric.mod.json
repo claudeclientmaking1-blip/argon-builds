@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "argon_pvp_aim_optimiser",
+  "version": "1.0.0",
+  "name": "Argon PvP Aim Optimiser",
+  "description": "Automatically adjusts the player's sensitivity based on whether they are aiming at the last player they hit.",
+  "authors": [
+    "ArgonBot"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.argonmod.ArgonPvPOptimiser"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "minecraft": "~1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
